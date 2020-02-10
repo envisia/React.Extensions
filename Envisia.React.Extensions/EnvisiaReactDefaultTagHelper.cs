@@ -6,7 +6,7 @@ using React;
 
 namespace Envisia.React.Extensions
 {
-    [HtmlTargetElement(Attributes = "react-net-module")]
+    [HtmlTargetElement("react-net-module")]
     public class EnvisiaReactDefaultTagHelper : EnvisiaReactSharedTagHelper
     {
         public EnvisiaReactDefaultTagHelper(IReactEnvironment reactEnvironment) : base(reactEnvironment)
