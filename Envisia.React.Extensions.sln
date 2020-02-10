@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Envisia.React.Extensions", "Envisia.React.Extensions\Envisia.React.Extensions.csproj", "{955D01F3-C554-4FDF-B623-2993C9A45CDE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{955D01F3-C554-4FDF-B623-2993C9A45CDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{955D01F3-C554-4FDF-B623-2993C9A45CDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{955D01F3-C554-4FDF-B623-2993C9A45CDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{955D01F3-C554-4FDF-B623-2993C9A45CDE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
