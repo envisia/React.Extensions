@@ -26,7 +26,6 @@ namespace Envisia.React.Extensions
             configure(ReactSiteConfiguration.Configuration);
 
             services.AddSingleton(provider => ReactSiteConfiguration.Configuration);
-            services.AddScoped<IFileCacheHash, FileCacheHash>();
             services.AddSingleton(provider => JsEngineSwitcher.Current);
             services.AddSingleton<IJavaScriptEngineFactory, JavaScriptEngineFactory>();
             services.AddSingleton<IReactIdGenerator, ReactIdGenerator>();
@@ -35,10 +34,12 @@ namespace Envisia.React.Extensions
 
             if (devMode)
             {
+                services.AddScoped<IFileCacheHash, NullFileCacheHash>();
                 services.AddSingleton<ICache, NullCache>();
             }
             else
             {
+                services.AddScoped<IFileCacheHash, FileCacheHash>();
                 services.AddSingleton<ICache, MemoryFileCacheCore>();
             }
 
