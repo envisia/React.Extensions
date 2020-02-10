@@ -27,6 +27,11 @@ namespace Envisia.React.Extensions
         {
             try
             {
+                if (string.IsNullOrEmpty(ComponentName))
+                {
+                    throw new Exception("invalid component name");
+                }
+                
                 var reactComponent = ReactEnvironment
                     .CreateComponent(ComponentName, Properties, ContainerId, ClientOnly, ServerOnly);
                 if (!string.IsNullOrEmpty(HtmlTag))
