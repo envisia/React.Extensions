@@ -39,12 +39,11 @@ namespace Envisia.React.Extensions
                     reactComponent.ContainerClass = ContainerClass;
                 }
 
+                output.TagName = null;
+                
                 await using var writer = new StringWriter();
                 reactComponent.RenderHtml(writer, ClientOnly, ServerOnly, ExceptionHandler, RenderFunctions);
                 await writer.WriteLineAsync();
-
-                output.TagName = null;
-                WriteScriptTag(writer, bodyWriter => reactComponent.RenderJavaScript(bodyWriter, true));
 
                 output.Content.SetHtmlContent(writer.ToString());
             }
