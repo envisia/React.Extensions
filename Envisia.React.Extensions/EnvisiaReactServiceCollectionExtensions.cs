@@ -20,8 +20,7 @@ namespace Envisia.React.Extensions
         /// <returns>The application builder (for chaining)</returns>
         public static IServiceCollection AddReactCore(
             this IServiceCollection services,
-            Action<IReactSiteConfiguration> configure,
-            bool devMode = false)
+            Action<IReactSiteConfiguration> configure)
         {
             configure(ReactSiteConfiguration.Configuration);
 
@@ -32,16 +31,8 @@ namespace Envisia.React.Extensions
             services.AddScoped<IReactEnvironment, ReactEnvironment>();
             services.AddSingleton<IFileSystem, AspNetFileSystem>();
 
-            if (devMode)
-            {
-                services.AddScoped<IFileCacheHash, NullFileCacheHash>();
-                services.AddSingleton<ICache, NullCache>();
-            }
-            else
-            {
-                services.AddScoped<IFileCacheHash, FileCacheHash>();
-                services.AddSingleton<ICache, MemoryFileCacheCore>();
-            }
+            services.AddScoped<IFileCacheHash, FileCacheHash>();
+            services.AddSingleton<ICache, MemoryFileCacheCore>();
 
             // Camelcase JSON properties by default - Can be overridden per-site in "configure".
             ReactSiteConfiguration.Configuration.JsonSerializerSettings.ContractResolver =
