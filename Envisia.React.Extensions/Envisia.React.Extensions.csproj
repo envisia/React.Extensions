@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.0</TargetFramework>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
-      <FrameworkReference Include="Microsoft.AspNetCore.App" Version="3.0.0" />
-      <PackageReference Include="React.AspNet" Version="5.1.2" />
+      <FrameworkReference Include="Microsoft.AspNetCore.App" Version="3.1.0" />
+      <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.6" />
+      <PackageReference Include="React.AspNet" Version="5.2.8" />
     </ItemGroup>
 
 </Project>

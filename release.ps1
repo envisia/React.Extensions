@@ -13,6 +13,7 @@ else {
     dotnet pack -c Release /p:Version=$Version
     
     dotnet nuget push -k $Env:NEXUS_NUGET_KEY -s https://nexus.envisia.io/repository/envisia-nuget/api/v2/package/ ./Envisia.React.Extensions/bin/Release/Envisia.React.Extensions.$Version.nupkg
+    dotnet nuget push -k $Env:NUGET_API_KEY -s https://api.nuget.org/v3/index.json ./Envisia.React.Extensions/bin/Release/Envisia.React.Extensions.$Version.nupkg
     
      git tag v$Version
      git push --tags

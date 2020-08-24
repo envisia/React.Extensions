@@ -1,5 +1,6 @@
 using System;
 using JavaScriptEngineSwitcher.Core;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using React;
@@ -33,6 +34,13 @@ namespace Envisia.React.Extensions
 
             services.AddScoped<IFileCacheHash, FileCacheHash>();
             services.AddSingleton<ICache, MemoryFileCacheCore>();
+
+            services.AddSingleton<IFileVersionProvider, EnvisiaReactFileVersionProvider>();
+            
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/build";
+            });
 
             // Camelcase JSON properties by default - Can be overridden per-site in "configure".
             ReactSiteConfiguration.Configuration.JsonSerializerSettings.ContractResolver =
