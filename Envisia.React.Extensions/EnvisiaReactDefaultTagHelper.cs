@@ -19,6 +19,7 @@ namespace Envisia.React.Extensions
         public string ContainerId { get; set; } = null;
         public bool ClientOnly { get; set; } = false;
         public bool ServerOnly { get; set; } = false;
+        public bool SkipLazyInit { get; set; } = false;
         public string ContainerClass { get; set; } = null;
         public Action<Exception, string, string> ExceptionHandler { get; set; } = null;
         public IRenderFunctions RenderFunctions { get; set; } = null;
@@ -33,7 +34,7 @@ namespace Envisia.React.Extensions
                 }
                 
                 var reactComponent = ReactEnvironment
-                    .CreateComponent(ComponentName, Properties, ContainerId, ClientOnly, ServerOnly);
+                    .CreateComponent(ComponentName, Properties, ContainerId, ClientOnly, ServerOnly, SkipLazyInit);
                 if (!string.IsNullOrEmpty(HtmlTag))
                 {
                     reactComponent.ContainerTag = HtmlTag;
