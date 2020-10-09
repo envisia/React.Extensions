@@ -1,5 +1,6 @@
 using System;
 using System.Security.Cryptography;
+using JavaScriptEngineSwitcher.Core.Resources;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Razor.Infrastructure;
@@ -59,6 +60,11 @@ namespace Envisia.React.Extensions
                 resolvedPath = path.Substring(0, queryStringOrFragmentStartIndex);
             }
 
+            if (string.IsNullOrEmpty(resolvedPath))
+            {
+                return path;
+            }
+
             if (Uri.TryCreate(resolvedPath, UriKind.Absolute, out var uri) && !uri.IsFile)
             {
                 // Don't append version if the path is absolute.
@@ -73,6 +79,10 @@ namespace Envisia.React.Extensions
             var cacheEntryOptions = new MemoryCacheEntryOptions();
             cacheEntryOptions.AddExpirationToken(fileProvider.Watch(resolvedPath));
             var fileInfo = fileProvider.GetFileInfo(resolvedPath);
+            if (fileInfo == null)
+            {
+                return value;
+            }
 
             if (!fileInfo.Exists &&
                 requestPathBase.HasValue &&
