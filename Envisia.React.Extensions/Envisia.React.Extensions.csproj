@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <PackageProjectUrl>https://github.com/envisia/React.Extensions</PackageProjectUrl>
         <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0.txt</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/envisia/React.Extensions</RepositoryUrl>
@@ -9,9 +9,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <FrameworkReference Include="Microsoft.AspNetCore.App" Version="3.1.0" />
-      <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.9" />
-      <PackageReference Include="React.AspNet" Version="5.2.10" />
+      <FrameworkReference Include="Microsoft.AspNetCore.App" Version="5.0.4" />
+      <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.4" />
+      <PackageReference Include="React.AspNet" Version="5.2.11" />
     </ItemGroup>
 
 </Project>

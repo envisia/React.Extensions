@@ -1,6 +1,5 @@
 using System;
 using System.Security.Cryptography;
-using JavaScriptEngineSwitcher.Core.Resources;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Razor.Infrastructure;
@@ -84,11 +83,12 @@ namespace Envisia.React.Extensions
                 return value;
             }
 
+            var resolvedPathBase = requestPathBase.Value ?? string.Empty;
             if (!fileInfo.Exists &&
                 requestPathBase.HasValue &&
-                resolvedPath.StartsWith(requestPathBase.Value, StringComparison.OrdinalIgnoreCase))
+                resolvedPath.StartsWith(resolvedPathBase, StringComparison.OrdinalIgnoreCase))
             {
-                var requestPathBaseRelativePath = resolvedPath.Substring(requestPathBase.Value.Length);
+                var requestPathBaseRelativePath = resolvedPath.Substring(resolvedPathBase.Length);
                 cacheEntryOptions.AddExpirationToken(fileProvider.Watch(requestPathBaseRelativePath));
                 fileInfo = fileProvider.GetFileInfo(requestPathBaseRelativePath);
             }
@@ -129,17 +129,13 @@ namespace Envisia.React.Extensions
 
         private static string GetHashForFile(IFileInfo fileInfo)
         {
-            using (var sha256 = CreateSHA256())
-            {
-                using (var readStream = fileInfo.CreateReadStream())
-                {
-                    var hash = sha256.ComputeHash(readStream);
-                    return WebEncoders.Base64UrlEncode(hash);
-                }
-            }
+            using var sha256 = CreateSha256();
+            using var readStream = fileInfo.CreateReadStream();
+            var hash = sha256.ComputeHash(readStream);
+            return WebEncoders.Base64UrlEncode(hash);
         }
 
-        private static SHA256 CreateSHA256()
+        private static SHA256 CreateSha256()
         {
             try
             {
