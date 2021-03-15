@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <PackageProjectUrl>https://github.com/envisia/React.Extensions</PackageProjectUrl>
-        <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0.txt</PackageLicenseUrl>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/envisia/React.Extensions</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
     </PropertyGroup>
