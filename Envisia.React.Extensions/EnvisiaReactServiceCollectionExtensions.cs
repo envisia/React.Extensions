@@ -1,4 +1,5 @@
 using System;
+using Envisia.React.Extensions.StaticFiles;
 using JavaScriptEngineSwitcher.Core;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,7 +38,7 @@ namespace Envisia.React.Extensions
 
             services.AddSingleton<IFileVersionProvider, EnvisiaReactFileVersionProvider>();
             
-            services.AddSpaStaticFiles(configuration =>
+            services.AddEvSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
             });

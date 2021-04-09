@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -59,11 +60,6 @@ namespace Envisia.React.Extensions
                 resolvedPath = path.Substring(0, queryStringOrFragmentStartIndex);
             }
 
-            if (string.IsNullOrEmpty(resolvedPath))
-            {
-                return path;
-            }
-
             if (Uri.TryCreate(resolvedPath, UriKind.Absolute, out var uri) && !uri.IsFile)
             {
                 // Don't append version if the path is absolute.
@@ -78,30 +74,22 @@ namespace Envisia.React.Extensions
             var cacheEntryOptions = new MemoryCacheEntryOptions();
             cacheEntryOptions.AddExpirationToken(fileProvider.Watch(resolvedPath));
             var fileInfo = fileProvider.GetFileInfo(resolvedPath);
-            if (fileInfo == null)
-            {
-                return value;
-            }
 
-            var resolvedPathBase = requestPathBase.Value ?? string.Empty;
             if (!fileInfo.Exists &&
                 requestPathBase.HasValue &&
-                resolvedPath.StartsWith(resolvedPathBase, StringComparison.OrdinalIgnoreCase))
+                resolvedPath.StartsWith(requestPathBase.Value, StringComparison.OrdinalIgnoreCase))
             {
-                var requestPathBaseRelativePath = resolvedPath.Substring(resolvedPathBase.Length);
+                var requestPathBaseRelativePath = resolvedPath.Substring(requestPathBase.Value.Length);
                 cacheEntryOptions.AddExpirationToken(fileProvider.Watch(requestPathBaseRelativePath));
                 fileInfo = fileProvider.GetFileInfo(requestPathBaseRelativePath);
             }
 
-            if (fileInfo.Exists)
+            value = fileInfo.Exists switch
             {
-                value = QueryHelpers.AddQueryString(path, VersionKey, GetHashForFile(fileInfo));
-            }
-            else
-            {
-                // if the file is not in the current server.
-                value = path;
-            }
+                true when fileInfo.Name != resolvedPath => path.Replace(Path.GetFileName(resolvedPath), fileInfo.Name),
+                true => QueryHelpers.AddQueryString(path, VersionKey, GetHashForFile(fileInfo)),
+                _ => path
+            };
 
             cacheEntryOptions.SetSize(value.Length * sizeof(char));
             value = _cache.Set(path, value, cacheEntryOptions);
@@ -129,13 +117,17 @@ namespace Envisia.React.Extensions
 
         private static string GetHashForFile(IFileInfo fileInfo)
         {
-            using var sha256 = CreateSha256();
-            using var readStream = fileInfo.CreateReadStream();
-            var hash = sha256.ComputeHash(readStream);
-            return WebEncoders.Base64UrlEncode(hash);
+            using (var sha256 = CreateSHA256())
+            {
+                using (var readStream = fileInfo.CreateReadStream())
+                {
+                    var hash = sha256.ComputeHash(readStream);
+                    return WebEncoders.Base64UrlEncode(hash);
+                }
+            }
         }
 
-        private static SHA256 CreateSha256()
+        private static SHA256 CreateSHA256()
         {
             try
             {
