@@ -37,8 +37,10 @@ namespace Envisia.React.Extensions
 
         public override void PostRender(Func<string, string> executeJs)
         {
+            // WARNING: See the following for security issues around embedding JSON in HTML:
+            // https://redux.js.org/usage/server-rendering#security-considerations
             var state = executeJs("JSON.stringify(store.getState())");
-            StoreState = state;
+            StoreState = state.Replace("<", "\\u003C");
         }
     }
 }
