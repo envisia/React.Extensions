@@ -9,6 +9,7 @@ namespace Envisia.React.Extensions
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            StringEscapeHandling = StringEscapeHandling.EscapeHtml,
         };
     }
 }
