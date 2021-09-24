@@ -6,7 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 
-namespace Envisia.React.Extensions.StaticFiles
+namespace Envisia.Webpack.Extensions.StaticFiles
 {
     public class EvManifestFileProvider : IFileProvider, IDisposable
     {

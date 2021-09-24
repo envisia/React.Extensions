@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.FileProviders;
 
-namespace Envisia.React.Extensions
+namespace Envisia.Webpack.Extensions
 {
     /* Src File: https://github.com/dotnet/aspnetcore/blob/master/src/Mvc/Mvc.Razor/src/Infrastructure/DefaultFileVersionProvider.cs */
     internal class EnvisiaReactFileVersionProvider : IFileVersionProvider

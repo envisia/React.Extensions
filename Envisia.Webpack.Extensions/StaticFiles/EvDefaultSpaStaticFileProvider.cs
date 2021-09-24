@@ -7,9 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 
-namespace Envisia.React.Extensions.StaticFiles
+namespace Envisia.Webpack.Extensions.StaticFiles
 {
-
     public class EvDefaultSpaStaticFileProvider : ISpaStaticFileProvider
     {
         private readonly IFileProvider _fileProvider;
@@ -50,6 +49,10 @@ namespace Envisia.React.Extensions.StaticFiles
                 {
                     _fileProvider = new EvManifestFileProvider(cacheProvider, absoluteRootPath);
                 }
+            }
+            else
+            {
+                _fileProvider = new NullFileProvider();
             }
         }
 

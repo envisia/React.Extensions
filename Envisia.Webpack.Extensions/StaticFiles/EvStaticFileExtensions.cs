@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.SpaServices.StaticFiles;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace Envisia.React.Extensions.StaticFiles
+namespace Envisia.Webpack.Extensions.StaticFiles
 {
     public static class EvStaticFileExtensions
     {

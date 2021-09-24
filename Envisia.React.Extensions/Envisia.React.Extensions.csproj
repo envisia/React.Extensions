@@ -14,4 +14,8 @@
       <PackageReference Include="React.AspNet" Version="5.2.11" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Envisia.Webpack.Extensions\Envisia.Webpack.Extensions.csproj" />
+    </ItemGroup>
+
 </Project>
