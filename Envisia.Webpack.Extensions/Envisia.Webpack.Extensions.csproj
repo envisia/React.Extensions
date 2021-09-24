@@ -3,8 +3,10 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net5.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <PackageProjectUrl>https://github.com/envisia/React.Extensions</PackageProjectUrl>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/envisia/React.Extensions</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
     </PropertyGroup>
     
     <ItemGroup>
