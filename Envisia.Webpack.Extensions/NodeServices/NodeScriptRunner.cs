@@ -98,7 +98,7 @@ namespace Envisia.Webpack.Extensions.NodeServices
                 {
                     // Node tasks commonly emit ANSI colors, but it wouldn't make sense to forward
                     // those to loggers (because a logger isn't necessarily any kind of terminal)
-                    logger.LogInformation(StripAnsiColors(line));
+                    logger.LogInformation(StripAnsiColors(line).TrimEnd('\n').TrimEnd('\r'));
                 }
             };
 
@@ -106,7 +106,7 @@ namespace Envisia.Webpack.Extensions.NodeServices
             {
                 if (!string.IsNullOrWhiteSpace(line))
                 {
-                    logger.LogError(StripAnsiColors(line));
+                    logger.LogError(StripAnsiColors(line).TrimEnd('\n').TrimEnd('\r'));
                 }
             };
 
