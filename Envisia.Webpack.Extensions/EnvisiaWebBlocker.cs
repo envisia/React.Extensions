@@ -4,9 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Envisia.Webpack.Extensions
 {
-    public class EnvisiaWebBlocker
+    public static class EnvisiaWebBlocker
     {
-        public void WaitForNodeCompilation(IApplicationBuilder app, bool condition = true)
+        public static void WaitForNodeCompilation(this IApplicationBuilder app, bool condition = true)
         {
             if (condition)
             {
