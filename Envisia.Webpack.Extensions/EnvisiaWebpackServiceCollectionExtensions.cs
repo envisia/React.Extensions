@@ -15,6 +15,7 @@ namespace Envisia.Webpack.Extensions
 
             services.AddSingleton(provider =>
                 ActivatorUtilities.CreateInstance<EnvisiaNodeScriptRunner>(provider, scriptName));
+            services.AddSingleton<EnvisiaNodeBlocker>();
             services.AddHostedService(provider => provider.GetRequiredService<EnvisiaNodeScriptRunner>());
         }
 

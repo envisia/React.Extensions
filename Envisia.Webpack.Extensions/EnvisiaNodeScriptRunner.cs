@@ -21,6 +21,7 @@ namespace Envisia.Webpack.Extensions
         private readonly IHostApplicationLifetime _applicationLifetime;
         private readonly DiagnosticSource _diagnosticSource;
         private readonly ILoggerFactory _loggerFactory;
+        private readonly EnvisiaNodeBlocker _envisiaNodeBlocker;
 
         private static readonly TimeSpan RegexMatchTimeout =
             TimeSpan.FromSeconds(5); // This is a development-time only feature, so a very long timeout is fine
@@ -31,12 +32,14 @@ namespace Envisia.Webpack.Extensions
             string scriptName,
             IOptions<SpaOptions> optionsProvider,
             IHostApplicationLifetime applicationLifetime,
-            ILoggerFactory loggerFactory, DiagnosticSource diagnosticSource)
+            ILoggerFactory loggerFactory, DiagnosticSource diagnosticSource, 
+            EnvisiaNodeBlocker envisiaNodeBlocker)
         {
             _optionsProvider = optionsProvider;
             _applicationLifetime = applicationLifetime;
             _loggerFactory = loggerFactory;
             _diagnosticSource = diagnosticSource;
+            _envisiaNodeBlocker = envisiaNodeBlocker;
             _scriptName = scriptName;
         }
 
@@ -77,6 +80,7 @@ namespace Envisia.Webpack.Extensions
                     // as it starts listening for requests.
                     await scriptRunner.StdOut.WaitForMatch(
                         new Regex("Starting Watch Mode...", RegexOptions.None, RegexMatchTimeout));
+                    _envisiaNodeBlocker.CompletionSource.SetResult(true);
                 }
                 catch (EndOfStreamException ex)
                 {
