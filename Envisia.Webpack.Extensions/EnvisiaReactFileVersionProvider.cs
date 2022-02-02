@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.SpaServices.StaticFiles;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
 
 namespace Envisia.Webpack.Extensions
 {
@@ -20,6 +21,7 @@ namespace Envisia.Webpack.Extensions
         private readonly IFileProvider _fileProvider;
         private readonly IMemoryCache _cache;
         private readonly ISpaStaticFileProvider _spaStaticFileProvider;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
         public EnvisiaReactFileVersionProvider(
             IWebHostEnvironment hostingEnvironment,
@@ -40,6 +42,7 @@ namespace Envisia.Webpack.Extensions
 
             _fileProvider = hostingEnvironment.WebRootFileProvider;
             _cache = cacheProvider.Cache;
+            _hostEnvironment = hostingEnvironment;
         }
 
         public string AddFileVersionToPath(PathString requestPathBase, string path)
@@ -47,6 +50,11 @@ namespace Envisia.Webpack.Extensions
             if (path == null)
             {
                 throw new ArgumentNullException(nameof(path));
+            }
+
+            if (_hostEnvironment.IsDevelopment())
+            {
+                return path;
             }
 
             // specific envisia implementation, that also appends a version to spa files
@@ -72,7 +80,6 @@ namespace Envisia.Webpack.Extensions
             }
 
             var cacheEntryOptions = new MemoryCacheEntryOptions();
-            cacheEntryOptions.AddExpirationToken(fileProvider.Watch(resolvedPath));
             var fileInfo = fileProvider.GetFileInfo(resolvedPath);
 
             if (!fileInfo.Exists &&
@@ -80,7 +87,6 @@ namespace Envisia.Webpack.Extensions
                 resolvedPath.StartsWith(requestPathBase.Value, StringComparison.OrdinalIgnoreCase))
             {
                 var requestPathBaseRelativePath = resolvedPath.Substring(requestPathBase.Value.Length);
-                cacheEntryOptions.AddExpirationToken(fileProvider.Watch(requestPathBaseRelativePath));
                 fileInfo = fileProvider.GetFileInfo(requestPathBaseRelativePath);
             }
 
@@ -117,17 +123,13 @@ namespace Envisia.Webpack.Extensions
 
         private static string GetHashForFile(IFileInfo fileInfo)
         {
-            using (var sha256 = CreateSHA256())
-            {
-                using (var readStream = fileInfo.CreateReadStream())
-                {
-                    var hash = sha256.ComputeHash(readStream);
-                    return WebEncoders.Base64UrlEncode(hash);
-                }
-            }
+            using var sha256 = CreateSha256();
+            using var readStream = fileInfo.CreateReadStream();
+            var hash = sha256.ComputeHash(readStream);
+            return WebEncoders.Base64UrlEncode(hash);
         }
 
-        private static SHA256 CreateSHA256()
+        private static SHA256 CreateSha256()
         {
             try
             {
