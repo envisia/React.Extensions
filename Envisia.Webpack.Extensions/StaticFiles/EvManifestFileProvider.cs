@@ -25,16 +25,12 @@ namespace Envisia.Webpack.Extensions.StaticFiles
 
         public IFileInfo GetFileInfo(string subpath)
         {
-            var manifest = GetManifest();
-            var strippedPath = subpath.TrimStart(PathSeparators);
-            return _downstreamFileProvider.GetFileInfo(manifest.TryGetValue(strippedPath, out var finalSubPath)
-                ? finalSubPath
-                : subpath);
+            return _downstreamFileProvider.GetFileInfo(GetRealPath(subpath));
         }
 
         public IDirectoryContents GetDirectoryContents(string subpath)
         {
-            return _downstreamFileProvider.GetDirectoryContents(subpath);
+            return _downstreamFileProvider.GetDirectoryContents(GetRealPath(subpath));
         }
 
         public IChangeToken Watch(string filter)
@@ -45,6 +41,13 @@ namespace Envisia.Webpack.Extensions.StaticFiles
         public void Dispose()
         {
             _downstreamFileProvider?.Dispose();
+        }
+
+        private string GetRealPath(string subpath)
+        {
+            var manifest = GetManifest();
+            var strippedPath = subpath.TrimStart(PathSeparators);
+            return manifest.TryGetValue(strippedPath, out var finalSubPath) ? finalSubPath : subpath;
         }
 
         private Dictionary<string, string> GetManifest()
