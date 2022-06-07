@@ -35,7 +35,9 @@ namespace Envisia.Webpack.Extensions.StaticFiles
 
         public IChangeToken Watch(string filter)
         {
-            return _downstreamFileProvider.Watch(filter);
+            // we do not want to poll for files in production...
+            // never ever!!
+            return NullChangeToken.Singleton;;
         }
 
         public void Dispose()
