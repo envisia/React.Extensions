@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.TagHelpers;
@@ -24,8 +25,11 @@ namespace Envisia.React.Extensions
         public Action<Exception, string, string> ExceptionHandler { get; set; } = null;
         public IRenderFunctions RenderFunctions { get; set; } = null;
 
+        [SuppressMessage("ReSharper", "ExplicitCallerInfoArgument", Justification = "better naming")]
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
+            using var envisiaReactActivity = Telementry.EnvisiaReactExtensionsSource
+                .StartActivity("EnvisiaReactTagActivity");
             try
             {
                 if (string.IsNullOrEmpty(ComponentName))
