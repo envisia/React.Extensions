@@ -4,24 +4,23 @@ using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using React;
 
-namespace Envisia.React.Extensions
-{
-    [HtmlTargetElement("react-net-init-module")]
-    public class EnvisiaReactInitTagHelper : EnvisiaReactSharedTagHelper
-    {
-        public bool ClientOnly { get; set; } = false;
+namespace Envisia.React.Extensions;
 
-        public EnvisiaReactInitTagHelper(IReactEnvironment reactEnvironment) : base(reactEnvironment)
-        {
-        }
+[HtmlTargetElement("react-net-init-module")]
+public class EnvisiaReactInitTagHelper : EnvisiaReactSharedTagHelper
+{
+    public bool ClientOnly { get; set; } = false;
+
+    public EnvisiaReactInitTagHelper(IReactEnvironment reactEnvironment) : base(reactEnvironment)
+    {
+    }
         
-        public override void Process(TagHelperContext context, TagHelperOutput output)
-        {
-            WriteScriptTag(output);
+    public override void Process(TagHelperContext context, TagHelperOutput output)
+    {
+        WriteScriptTag(output);
             
-            using var writer = new StringWriter();
-            ReactEnvironment.GetInitJavaScript(writer, ClientOnly);
-            output.Content.SetHtmlContent(writer.ToString());
-        }
+        using var writer = new StringWriter();
+        ReactEnvironment.GetInitJavaScript(writer, ClientOnly);
+        output.Content.SetHtmlContent(writer.ToString());
     }
 }

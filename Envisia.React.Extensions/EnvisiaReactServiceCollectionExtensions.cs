@@ -4,7 +4,6 @@ using JavaScriptEngineSwitcher.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using React;
-using React.AspNet;
 
 namespace Envisia.React.Extensions;
 
@@ -30,7 +29,6 @@ public static class EnvisiaReactServiceCollectionExtensions
         services.AddSingleton<IJavaScriptEngineFactory, JavaScriptEngineFactory>();
         services.AddSingleton<IReactIdGenerator, ReactIdGenerator>();
         services.AddScoped<IReactEnvironment, EnvisiaReactEnvironment>();
-        services.AddSingleton<IFileSystem, AspNetFileSystem>();
         services.AddScoped<IFileCacheHash, FileCacheHash>();
         services.AddSingleton<ICache, MemoryFileCacheCore>();
 
