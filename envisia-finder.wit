@@ -1,0 +1,4 @@
+package local:envisia
+world envisia {
+  export render-component: func(name: string, values: string) -> string
+}

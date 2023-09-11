@@ -2,5 +2,5 @@ bin/
 obj/
 /packages/
 .vscode
-example
-target
+example/
+target/
