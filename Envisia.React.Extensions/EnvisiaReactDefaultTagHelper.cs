@@ -30,6 +30,7 @@ namespace Envisia.React.Extensions
         {
             using var envisiaReactActivity = Telementry.EnvisiaReactExtensionsSource
                 .StartActivity("EnvisiaReactTagActivity");
+            envisiaReactActivity?.SetTag("ComponentName", ComponentName);
             try
             {
                 if (string.IsNullOrEmpty(ComponentName))

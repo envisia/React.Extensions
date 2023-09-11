@@ -1,0 +1,11 @@
+namespace envisia {};
+
+callback interface TaskResult {
+    void success(string result);
+    void error(string result);
+};
+
+interface ComponentRenderer {
+    constructor();
+    void render_component(TaskResult result, string file, string name, string values);
+};

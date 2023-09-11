@@ -1,0 +1,31 @@
+[package]
+name = "wasmtime-test"
+version = "0.1.0"
+edition = "2021"
+
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "envisia_wasm"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[workspace]
+
+[dependencies]
+# thiserror = "1.0"
+anyhow = "1.0.65"
+async-std = { version = "1.12.0", features = ["attributes"] }
+cap-std = "1.0.12"
+# cap-async-std = "0.26.1"
+# tokio = { version = "1.32.0", features = ["full"] }
+wasmtime = { version = "12.0.1", features = ["component-model", "cranelift"] }
+wasmtime-wasi = "12.0.1"
+uniffi = { version = "0.23.0" }
+uniffi_macros = { version = "0.23.0" }
+
+[build-dependencies]
+uniffi = { version = "0.23.0", features = ["build"] }
+
+[dev-dependencies]
+uniffi = { version = "0.23.0", features = ["bindgen-tests"] }
