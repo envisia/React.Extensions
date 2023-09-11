@@ -1,0 +1,4 @@
+[bindings.csharp]
+namespace = "Envisia.Wasm.Extensions"
+package_name = "envisia_wasm"
+cdylib_name = "envisia_wasm"
