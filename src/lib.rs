@@ -1,11 +1,10 @@
+use async_std::task;
 use std::fmt::Debug;
-use std::time::Instant;
 use wasmtime::{
     component::{Component, Linker},
     Config, Engine, Store, WasmBacktraceDetails,
 };
-use wasmtime_wasi::preview2::{Table, WasiCtx, WasiCtxBuilder, WasiView, command};
-use async_std::task;
+use wasmtime_wasi::preview2::{command, Table, WasiCtx, WasiCtxBuilder, WasiView};
 
 wasmtime::component::bindgen!({
     world: "envisia",
@@ -13,101 +12,79 @@ wasmtime::component::bindgen!({
     async: true,
 });
 
-pub trait TaskResult: Send + Sync + Debug {
+pub trait TaskResult: Send + Sync {
     fn success(&self, result: String);
     fn error(&self, result: String);
 }
 
-struct ComponentRenderer {}
+pub struct ComponentRenderer<'a> {
+    _instance_id: i32,
+    engine: &'a Engine,
+}
 
-impl ComponentRenderer {
-    pub fn new() -> Self {
-        Self {}
+impl<'a> ComponentRenderer<'a> {
+    pub fn new(file: String) -> Self {
+        let builder = WasiCtxBuilder::new().inherit_stdio();
+        let mut table = Table::new();
+        let wasi = builder.build(&mut table).unwrap();
+
+        let mut config = Config::new();
+        config.cache_config_load_default().unwrap();
+        config.wasm_backtrace_details(WasmBacktraceDetails::Enable);
+        config.wasm_component_model(true);
+        config.async_support(true);
+
+        let engine = Engine::new(&config).unwrap();
+        let mut linker = Linker::new(&engine);
+
+        let component = Component::from_file(&engine, file).unwrap();
+
+        struct CommandCtx {
+            table: Table,
+            wasi: WasiCtx,
+        }
+        impl WasiView for CommandCtx {
+            fn table(&self) -> &Table {
+                &self.table
+            }
+            fn table_mut(&mut self) -> &mut Table {
+                &mut self.table
+            }
+            fn ctx(&self) -> &WasiCtx {
+                &self.wasi
+            }
+            fn ctx_mut(&mut self) -> &mut WasiCtx {
+                &mut self.wasi
+            }
+        }
+
+        let mut store = Store::new(&engine, CommandCtx { table, wasi });
+
+        Self { _instance_id: 1 }
     }
 
-    fn render_component(
+    pub fn render_component(
         &self,
         callback: Box<dyn TaskResult>,
         file: String,
         name: String,
         values: String,
     ) {
-        callback.success(format!("file: {}, name: {}, values: {}", file, name, values).to_string());
-
         let _ = task::spawn(async move {
-            let mut now = Instant::now();
-            let builder = WasiCtxBuilder::new().inherit_stdio();
-            let mut table = Table::new();
-            let wasi = builder.build(&mut table).unwrap();
-
-            let mut config = Config::new();
-            config.cache_config_load_default().unwrap();
-            config.wasm_backtrace_details(WasmBacktraceDetails::Enable);
-            config.wasm_component_model(true);
-            config.async_support(true);
-            callback.success("0".to_string());
-
-            let engine = Engine::new(&config).unwrap();
-            let mut linker = Linker::new(&engine);
-
-            let component = Component::from_file(&engine, file).unwrap();
-
-            struct CommandCtx {
-                table: Table,
-                wasi: WasiCtx,
-            }
-            impl WasiView for CommandCtx {
-                fn table(&self) -> &Table {
-                    &self.table
-                }
-                fn table_mut(&mut self) -> &mut Table {
-                    &mut self.table
-                }
-                fn ctx(&self) -> &WasiCtx {
-                    &self.wasi
-                }
-                fn ctx_mut(&mut self) -> &mut WasiCtx {
-                    &mut self.wasi
-                }
-            }
-            callback.success("1".to_string());
-            let elapsed = now.elapsed();
-            now = Instant::now();
-            callback.success(format!("1.5: {:.2?}", elapsed).to_string());
-
-            let mut store = Store::new(&engine, CommandCtx { table, wasi });
-
-
-            let elapsed = now.elapsed();
-            now = Instant::now();
-            callback.success(format!("2: {:.2?}", elapsed).to_string());
             let (instance, _instance) = Envisia::instantiate_async(&mut store, &component, &linker)
                 .await
                 .unwrap();
 
-            let elapsed = now.elapsed();
-            now = Instant::now();
-
             command::add_to_linker(&mut linker).unwrap();
-            callback.success(format!("3: {:.2?}", elapsed).to_string());
             let res = instance
                 .call_render_component(&mut store, name.as_str(), values.as_str())
                 .await
                 .unwrap();
 
-                callback.success(format!("Length: {}", res.len()));
-                callback.success(res);
-                /*
-            let elapsed2 = now.elapsed();
-            match res {
-                Ok(s) => callback.success(format!("4: {} | {:.2?}", s, elapsed2).to_string()),
-                Err(err) => callback.error(err.to_string())
-            } */
+            println!("success: {}", res);
+
+            callback.success(res);
         });
-
-        /*
-
-        Ok(res) */
     }
 }
 

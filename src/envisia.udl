@@ -6,6 +6,6 @@ callback interface TaskResult {
 };
 
 interface ComponentRenderer {
-    constructor();
+    constructor(string file);
     void render_component(TaskResult result, string file, string name, string values);
 };

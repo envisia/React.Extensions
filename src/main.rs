@@ -1,98 +1,86 @@
-use std::io::Read;
-use std::{
-    fs::{self, File},
-    time::Instant,
-};
+use std::sync::Mutex;
+use std::task::Poll;
+use std::{future::Future, sync::Arc};
 
 use anyhow::Result;
-use wasmtime::{
-    component::{Component, Linker},
-    Config, Engine, PoolingAllocationConfig, Store, WasmBacktraceDetails,
-};
-use wasmtime_wasi::preview2::{command, Table, WasiCtx, WasiCtxBuilder, WasiView};
+use envisia_wasm::{ComponentRenderer, TaskResult};
 
-use std::io::Write;
+#[derive(Debug, Clone)]
+struct EnvisiaPromiseResult {
+    data: String,
+    error: bool,
+}
 
-wasmtime::component::bindgen!({
-    world: "envisia",
-    path: "envisia-finder.wit",
-    async: true,
-});
+struct EnvisiaPromise {
+    data: Arc<Mutex<Option<EnvisiaPromiseResult>>>,
+}
 
-fn get_file_as_byte_vec(filename: &String) -> Vec<u8> {
-    let mut f = File::open(&filename).expect("no file found");
-    let metadata = fs::metadata(&filename).expect("unable to read metadata");
-    let mut buffer = vec![0; metadata.len() as usize];
-    f.read(&mut buffer).expect("buffer overflow");
+impl Clone for Box<EnvisiaPromise> {
+    fn clone(&self) -> Self {
+        Box::new(EnvisiaPromise {
+            data: self.data.clone(),
+        })
+    }
+}
 
-    buffer
+impl EnvisiaPromise {
+    pub fn new() -> Self {
+        Self {
+            data: Arc::new(Mutex::new(None)),
+        }
+    }
+}
+
+impl Future for EnvisiaPromise {
+    type Output = EnvisiaPromiseResult;
+
+    fn poll(
+        self: std::pin::Pin<&mut Self>,
+        _cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<Self::Output> {
+        match self.data.lock().unwrap().clone() {
+            None => Poll::Pending,
+            Some(response) => Poll::Ready(EnvisiaPromiseResult {
+                data: response.data.clone(),
+                error: response.error.clone(),
+            }),
+        }
+    }
+}
+
+impl TaskResult for EnvisiaPromise {
+    fn success(&self, result: String) {
+        let mut inner = self.data.lock().unwrap();
+        *inner = Some(EnvisiaPromiseResult {
+            data: result,
+            error: false,
+        });
+    }
+
+    fn error(&self, result: String) {
+        let mut inner = self.data.lock().unwrap();
+        *inner = Some(EnvisiaPromiseResult {
+            data: result,
+            error: false,
+        });
+    }
 }
 
 #[async_std::main]
 async fn main() -> Result<()> {
-    let mut now = Instant::now();
-    let builder = WasiCtxBuilder::new().inherit_stdio();
-    let mut table = Table::new();
-    let wasi = builder.build(&mut table)?;
+    let renderer = ComponentRenderer::new();
 
-    let mut config = Config::new();
-    config.cache_config_load_default().unwrap();
-    config.wasm_backtrace_details(WasmBacktraceDetails::Enable);
-    config.wasm_component_model(true);
-    config.async_support(true);
+    let callback = Box::new(EnvisiaPromise::new());
 
-    println!("took1: {:.2?}", now.elapsed());
-    now = Instant::now();
+    renderer.render_component(
+        callback.clone(),
+        "/Users/schmitch/wasm/envisia.component.wasm".to_string(),
+        "SoftwareLinks".to_string(),
+        "{\"httpsEnabled\": false}".to_string(),
+    );
 
-    let engine = Engine::new(&config)?;
-    let mut linker = Linker::new(&engine);
-    println!("took2: {:.2?}", now.elapsed());
-    now = Instant::now();
+    let awaited_callback = callback.await;
+    println!("Values: {:?}", awaited_callback);
 
-
-    let wasm_file = "/Users/schmitch/projects/envisia/finder/finder-v2/Finder.Web/ClientApp/build/ssr/envisia.component.wasm";
-
-    let precompiled = engine.precompile_component(&get_file_as_byte_vec(&wasm_file.to_string()))?;
-    println!("took3: {:.2?}", now.elapsed());
-    now = Instant::now();
-
-    let component = unsafe { Component::deserialize(&engine, precompiled)? }; // Component::from_file(&engine, wasm_file).unwrap();
-
-    struct CommandCtx {
-        table: Table,
-        wasi: WasiCtx,
-    }
-    impl WasiView for CommandCtx {
-        fn table(&self) -> &Table {
-            &self.table
-        }
-        fn table_mut(&mut self) -> &mut Table {
-            &mut self.table
-        }
-        fn ctx(&self) -> &WasiCtx {
-            &self.wasi
-        }
-        fn ctx_mut(&mut self) -> &mut WasiCtx {
-            &mut self.wasi
-        }
-    }
-
-    command::add_to_linker(&mut linker).unwrap();
-    let mut store = Store::new(&engine, CommandCtx { table, wasi });
-
-    let (instance, _instance) = Envisia::instantiate_async(&mut store, &component, &linker).await?;
-
-    println!("took9: {:.2?}", now.elapsed());
-    now = Instant::now();
-    let res = instance
-        .call_render_component(&mut store, "SoftwareLinks", "{\"httpsEnabled\": false}")
-        .await?;
-    
-
-    let mut stdout = std::io::stdout();
-    let mut lock = stdout.lock();
-    writeln!(lock, "{}", res)?;
-
-    println!("took10: {:.2?}", now.elapsed());
     Ok(())
 }
