@@ -27,9 +27,11 @@ namespace Envisia.Webpack.Extensions
             TimeSpan.FromSeconds(5); // This is a development-time only feature, so a very long timeout is fine
 
         private readonly string _scriptName;
+        private readonly string _watchMessage;
 
         public EnvisiaNodeScriptRunner(
             string scriptName,
+            string watchMessage,
             IOptions<SpaOptions> optionsProvider,
             IHostApplicationLifetime applicationLifetime,
             ILoggerFactory loggerFactory, DiagnosticSource diagnosticSource, 
@@ -41,6 +43,7 @@ namespace Envisia.Webpack.Extensions
             _diagnosticSource = diagnosticSource;
             _envisiaNodeBlocker = envisiaNodeBlocker;
             _scriptName = scriptName;
+            _watchMessage = watchMessage;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -79,7 +82,7 @@ namespace Envisia.Webpack.Extensions
                     // no compiler warnings. So instead of waiting for that, consider it ready as soon
                     // as it starts listening for requests.
                     await scriptRunner.StdOut.WaitForMatch(
-                        new Regex("Starting Watch Mode...", RegexOptions.None, RegexMatchTimeout));
+                        new Regex(_watchMessage, RegexOptions.None, RegexMatchTimeout));
                     _envisiaNodeBlocker.CompletionSource.SetResult(true);
                 }
                 catch (EndOfStreamException ex)
