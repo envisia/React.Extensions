@@ -9,12 +9,13 @@ namespace Envisia.Webpack.Extensions
         public static void AddDevelopmentModeNodeBuildDev(
             this IServiceCollection services,
             string scriptName = "build:dev",
-            bool isDevelopment = false)
+            bool isDevelopment = false,
+            string watchMessage = "Starting Watch Mode...")
         {
             if (!isDevelopment) return;
 
             services.AddSingleton(provider =>
-                ActivatorUtilities.CreateInstance<EnvisiaNodeScriptRunner>(provider, scriptName));
+                ActivatorUtilities.CreateInstance<EnvisiaNodeScriptRunner>(provider, scriptName, watchMessage));
             services.AddSingleton<EnvisiaNodeBlocker>();
             services.AddHostedService(provider => provider.GetRequiredService<EnvisiaNodeScriptRunner>());
         }
