@@ -1,15 +1,14 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Envisia.React.Extensions
+namespace Envisia.React.Extensions;
+
+public static class EnvisiaReactConstants
 {
-    public static class EnvisiaReactConstants
+    public static readonly JsonSerializerSettings JsonCamelCaseSerializerSettings = new JsonSerializerSettings
     {
-        public static readonly JsonSerializerSettings JsonCamelCaseSerializerSettings = new JsonSerializerSettings
-        {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            StringEscapeHandling = StringEscapeHandling.EscapeHtml,
-        };
-    }
+        ContractResolver = new CamelCasePropertyNamesContractResolver(),
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+        StringEscapeHandling = StringEscapeHandling.EscapeHtml,
+    };
 }

@@ -1,4 +1,3 @@
-using System;
 using OpenTelemetry.Trace;
 
 namespace Envisia.React.Extensions;

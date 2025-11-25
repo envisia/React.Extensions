@@ -2,45 +2,44 @@ using System;
 using Newtonsoft.Json;
 using React;
 
-namespace Envisia.React.Extensions
+namespace Envisia.React.Extensions;
+
+public class EnvisiaReduxStoreFunctions : RenderFunctionsBase
 {
-    public class EnvisiaReduxStoreFunctions : RenderFunctionsBase
+    public string StoreState { get; private set; }
+
+    private string InitialStore { get; }
+    private bool JSLoaded { get; set; }
+
+    public EnvisiaReduxStoreFunctions(string rootReducerName, object storeModel)
     {
-        public string StoreState { get; private set; }
+        var serialized = JsonConvert.SerializeObject(
+            storeModel,
+            EnvisiaReactConstants.JsonCamelCaseSerializerSettings);
 
-        private string InitialStore { get; }
-        private bool JSLoaded { get; set; }
+        InitialStore = $"store = ReduxStore.createStore({rootReducerName}, {serialized});";
+    }
 
-        public EnvisiaReduxStoreFunctions(string rootReducerName, object storeModel)
+    /// <summary>
+    /// Implementation of PreRender
+    /// </summary>
+    /// <param name="executeJs"></param>
+    public override void PreRender(Func<string, string> executeJs)
+    {
+        if (JSLoaded)
         {
-            var serialized = JsonConvert.SerializeObject(
-                storeModel,
-                EnvisiaReactConstants.JsonCamelCaseSerializerSettings);
-
-            InitialStore = $"store = ReduxStore.createStore({rootReducerName}, {serialized});";
+            return;
         }
 
-        /// <summary>
-        /// Implementation of PreRender
-        /// </summary>
-        /// <param name="executeJs"></param>
-        public override void PreRender(Func<string, string> executeJs)
-        {
-            if (JSLoaded)
-            {
-                return;
-            }
+        executeJs(InitialStore);
+        JSLoaded = true;
+    }
 
-            executeJs(InitialStore);
-            JSLoaded = true;
-        }
-
-        public override void PostRender(Func<string, string> executeJs)
-        {
-            // WARNING: See the following for security issues around embedding JSON in HTML:
-            // https://redux.js.org/usage/server-rendering#security-considerations
-            var state = executeJs("JSON.stringify(store.getState())");
-            StoreState = state.Replace("<", "\\u003C");
-        }
+    public override void PostRender(Func<string, string> executeJs)
+    {
+        // WARNING: See the following for security issues around embedding JSON in HTML:
+        // https://redux.js.org/usage/server-rendering#security-considerations
+        var state = executeJs("JSON.stringify(store.getState())");
+        StoreState = state.Replace("<", "\\u003C");
     }
 }

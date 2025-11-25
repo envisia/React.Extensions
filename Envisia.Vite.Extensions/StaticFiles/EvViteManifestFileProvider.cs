@@ -54,13 +54,13 @@ namespace Envisia.Vite.Extensions.StaticFiles
             // We need to look for the file in the manifest entries
             foreach (var entry in manifest)
             {
-                if (entry.Value.TryGetValue("file", out var file) && file.GetString() == strippedPath)
+                if (entry.Value.TryGetProperty("file", out var file) && file.GetString() == strippedPath)
                 {
                     return strippedPath;
                 }
                 
                 // Check if this is the source file being requested
-                if (entry.Key == strippedPath && entry.Value.TryGetValue("file", out var outputFile))
+                if (entry.Key == strippedPath && entry.Value.TryGetProperty("file", out var outputFile))
                 {
                     return outputFile.GetString();
                 }
