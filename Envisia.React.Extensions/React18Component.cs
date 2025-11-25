@@ -10,7 +10,7 @@ public sealed class React18Component(
     IReactSiteConfiguration configuration,
     IReactIdGenerator reactIdGenerator,
     string componentName,
-    string containerId)
+    string? containerId)
     : ReactComponent(environment, configuration, reactIdGenerator, componentName, containerId)
 {
     /// <summary>

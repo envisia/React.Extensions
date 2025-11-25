@@ -49,15 +49,6 @@ namespace Envisia.React.Extensions
 
             services.AddHtmlStaticFileVersion();
 
-            if (react18)
-            {
-                AssemblyRegistration.Container
-                    .Unregister<IReactEnvironment>();
-                AssemblyRegistration.Container
-                    .Register<IReactEnvironment, React18Environment>()
-                    .AsPerRequestSingleton();
-            }
-
             // Camelcase JSON properties by default - Can be overridden per-site in "configure".
             ReactSiteConfiguration.Configuration.JsonSerializerSettings.ContractResolver =
                 new CamelCasePropertyNamesContractResolver();
