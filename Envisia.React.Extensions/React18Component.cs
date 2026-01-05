@@ -5,7 +5,7 @@ namespace Envisia.React.Extensions;
 
 #nullable enable
 
-public sealed class React18Component(
+public class React18Component(
     IReactEnvironment environment,
     IReactSiteConfiguration configuration,
     IReactIdGenerator reactIdGenerator,

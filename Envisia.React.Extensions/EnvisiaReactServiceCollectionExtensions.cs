@@ -1,13 +1,10 @@
 using System;
 using Envisia.Webpack.Extensions;
-using Envisia.Webpack.Extensions.StaticFiles;
 using JavaScriptEngineSwitcher.Core;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using React;
 using React.AspNet;
-using AssemblyRegistration = React.AssemblyRegistration;
 
 namespace Envisia.React.Extensions
 {
