@@ -51,15 +51,15 @@ namespace Envisia.Webpack.Extensions.NodeServices
             }
 
             var exeToRun = pkgManagerCommand;
-            var completeArguments = $"{scriptName} -- {arguments ?? string.Empty}";
-            pkgManagerScript = string.IsNullOrWhiteSpace(pkgManagerScript) ? string.Empty : $"{pkgManagerScript} "; 
+            pkgManagerScript = string.IsNullOrWhiteSpace(pkgManagerScript) ? string.Empty : $"{pkgManagerScript} ";
+            var completeArguments = $"{pkgManagerScript}{scriptName} -- {arguments ?? string.Empty}";
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 // On Windows, the node executable is a .cmd file, so it can't be executed
                 // directly (except with UseShellExecute=true, but that's no good, because
                 // it prevents capturing stdio). So we need to invoke it via "cmd /c".
                 exeToRun = "cmd";
-                completeArguments = $"/c {pkgManagerCommand} {pkgManagerScript}{completeArguments}";
+                completeArguments = $"/c {pkgManagerCommand} {completeArguments}";
             }
 
             var processStartInfo = new ProcessStartInfo(exeToRun)
@@ -69,7 +69,7 @@ namespace Envisia.Webpack.Extensions.NodeServices
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
-                WorkingDirectory = workingDirectory
+                WorkingDirectory = workingDirectory,
             };
 
             if (envVars != null)

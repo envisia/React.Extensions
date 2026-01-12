@@ -10,10 +10,10 @@ namespace Envisia.Webpack.Extensions
         public static void AddNodeRunner(
             this IServiceCollection services,
             string scriptName = "build:dev",
-            bool isDevelopment = false,
+            bool condition = false,
             string watchMessage = "Starting Watch Mode...")
         {
-            if (!isDevelopment) return;
+            if (!condition) return;
 
             services.AddSingleton(provider =>
                 ActivatorUtilities.CreateInstance<EnvisiaNodeScriptRunner>(provider, scriptName, watchMessage));

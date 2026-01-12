@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Envisia.Webpack.Extensions;
 
@@ -7,4 +8,5 @@ namespace Envisia.Webpack.Extensions;
 public sealed class EvSpaOptions
 {
     public string PackageManagerScript { get; set; } = "run";
+    public Dictionary<string, string> EnvironmentVariables { get; set; } = new ();
 }

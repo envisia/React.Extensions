@@ -63,6 +63,7 @@ namespace Envisia.Webpack.Extensions
             var envisiaOptions = new EvSpaOptions
             {
                 PackageManagerScript = _envisiaOptionsProvider.Value.PackageManagerScript,
+                EnvironmentVariables = _envisiaOptionsProvider.Value.EnvironmentVariables,
             };
 
             var pkgManagerCommand = options.PackageManagerCommand;
@@ -71,7 +72,7 @@ namespace Envisia.Webpack.Extensions
 
             var logger = _loggerFactory.CreateLogger(LogCategoryName);
 
-            var envVars = new Dictionary<string, string>();
+            var envVars = envisiaOptions.EnvironmentVariables;
             var scriptRunner = new NodeScriptRunner(
                 sourcePath,
                 _scriptName,
