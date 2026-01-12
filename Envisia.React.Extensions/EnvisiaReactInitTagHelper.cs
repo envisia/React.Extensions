@@ -4,7 +4,7 @@ using React;
 
 namespace Envisia.React.Extensions;
 
-[HtmlTargetElement("react-net-init-module")]
+[HtmlTargetElement("react-init")]
 public class EnvisiaReactInitTagHelper(IReactEnvironment reactEnvironment)
     : EnvisiaReactSharedTagHelper(reactEnvironment)
 {
