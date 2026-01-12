@@ -33,9 +33,10 @@ public class EnvisiaReactDefaultTagHelper(IReactEnvironment reactEnvironment)
             {
                 throw new Exception("invalid component name");
             }
+            var componentName = $"EvComponents.{ComponentName}";
 
             var reactComponent = ReactEnvironment
-                .CreateComponent(ComponentName, Properties, ContainerId, ClientOnly, ServerOnly, SkipLazyInit);
+                .CreateComponent(componentName, Properties, ContainerId, ClientOnly, ServerOnly, SkipLazyInit);
             if (!string.IsNullOrEmpty(HtmlTag))
             {
                 reactComponent.ContainerTag = HtmlTag;
