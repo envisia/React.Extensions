@@ -18,6 +18,7 @@ namespace Envisia.Webpack.Extensions
     {
         private const string LogCategoryName = "Microsoft.AspNetCore.SpaServices";
         private readonly IOptions<SpaOptions> _optionsProvider;
+        private readonly IOptions<EvSpaOptions> _envisiaOptionsProvider;
         private readonly IHostApplicationLifetime _applicationLifetime;
         private readonly DiagnosticSource _diagnosticSource;
         private readonly ILoggerFactory _loggerFactory;
@@ -33,11 +34,13 @@ namespace Envisia.Webpack.Extensions
             string scriptName,
             string watchMessage,
             IOptions<SpaOptions> optionsProvider,
+            IOptions<EvSpaOptions> envisiaOptionsProvider,
             IHostApplicationLifetime applicationLifetime,
             ILoggerFactory loggerFactory, DiagnosticSource diagnosticSource, 
             EnvisiaNodeBlocker envisiaNodeBlocker)
         {
             _optionsProvider = optionsProvider;
+            _envisiaOptionsProvider = envisiaOptionsProvider;
             _applicationLifetime = applicationLifetime;
             _loggerFactory = loggerFactory;
             _diagnosticSource = diagnosticSource;
@@ -57,7 +60,13 @@ namespace Envisia.Webpack.Extensions
                 DevServerPort = _optionsProvider.Value.DevServerPort,
             };
 
+            var envisiaOptions = new EvSpaOptions
+            {
+                PackageManagerScript = _envisiaOptionsProvider.Value.PackageManagerScript,
+            };
+
             var pkgManagerCommand = options.PackageManagerCommand;
+            var pkgManagerScript = envisiaOptions.PackageManagerScript;
             var sourcePath = options.SourcePath;
 
             var logger = _loggerFactory.CreateLogger(LogCategoryName);
@@ -69,6 +78,7 @@ namespace Envisia.Webpack.Extensions
                 null,
                 envVars,
                 pkgManagerCommand,
+                pkgManagerScript,
                 _diagnosticSource,
                 _applicationLifetime.ApplicationStopping);
             scriptRunner.AttachToLogger(logger);

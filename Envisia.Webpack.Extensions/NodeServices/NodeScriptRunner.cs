@@ -25,7 +25,15 @@ namespace Envisia.Webpack.Extensions.NodeServices
 
         private static Regex AnsiColorRegex = new Regex("\x001b\\[[0-9;]*m", RegexOptions.None, TimeSpan.FromSeconds(1));
 
-        public NodeScriptRunner(string workingDirectory, string scriptName, string arguments, IDictionary<string, string> envVars, string pkgManagerCommand, DiagnosticSource diagnosticSource, CancellationToken applicationStoppingToken)
+        public NodeScriptRunner(
+            string workingDirectory, 
+            string scriptName, 
+            string arguments, 
+            IDictionary<string, string> envVars, 
+            string pkgManagerCommand,
+            string pkgManagerScript,
+            DiagnosticSource diagnosticSource, 
+            CancellationToken applicationStoppingToken)
         {
             if (string.IsNullOrEmpty(workingDirectory))
             {
@@ -43,7 +51,7 @@ namespace Envisia.Webpack.Extensions.NodeServices
             }
 
             var exeToRun = pkgManagerCommand;
-            var completeArguments = $"run {scriptName} -- {arguments ?? string.Empty}";
+            var completeArguments = $"{scriptName} -- {arguments ?? string.Empty}";
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 // On Windows, the node executable is a .cmd file, so it can't be executed
