@@ -25,7 +25,7 @@ namespace Envisia.Webpack.Extensions
                 .AddHealthChecks()
                 .AddCheck<EnvisiaNodeHealthCheck>(
                     "node-script-runner", 
-                    tags: ["live"],
+                    tags: ["ready"],
                     failureStatus: HealthStatus.Unhealthy);
 
             services.Configure<SpaOptions>(options =>
