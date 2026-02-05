@@ -51,6 +51,14 @@ namespace Envisia.Webpack.Extensions
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            if (_envisiaOptionsProvider.Value.WaitForApplicationStarted)
+            {
+                var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                await using var registration = _applicationLifetime.ApplicationStarted.Register(() => tcs.TrySetResult(true));
+                await using var cancellation = stoppingToken.Register(() => tcs.TrySetCanceled());
+                await tcs.Task;
+            }
+
             var options = new SpaOptions
             {
                 DefaultPage = _optionsProvider.Value.DefaultPage,
@@ -64,6 +72,7 @@ namespace Envisia.Webpack.Extensions
             {
                 PackageManagerScript = _envisiaOptionsProvider.Value.PackageManagerScript,
                 EnvironmentVariables = _envisiaOptionsProvider.Value.EnvironmentVariables,
+                WaitForApplicationStarted = _envisiaOptionsProvider.Value.WaitForApplicationStarted,
             };
 
             var pkgManagerCommand = options.PackageManagerCommand;
